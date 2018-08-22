@@ -1,0 +1,94 @@
+info :
+  build:
+    artifact : '@project.artifactId@'
+    name : '@project.name@'
+    description : '@project.description@'
+    version : '@project.version@'
+
+spring:
+  profiles:
+    active: prod
+  application:
+    name: '@project.description@'
+  boot:
+    admin:
+      url : http://127.0.0.1:9088/
+
+#endpoints:
+#  health:
+#    sensitive : true
+logging:
+  name: resource
+  level: info
+  path: /home/
+
+#pagehelper分页插件配置
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+---
+#prod 环境
+spring:
+  profiles: prod
+  datasource:
+    url: jdbc:mysql://
+    username:
+    password:
+    driver-class-name: com.mysql.jdbc.Driver
+    validation-query: SELECT 1
+    test-while-idle: true
+    initial-size: 5
+    max-active: 25
+    max-wait: 6000
+    min-idle: 5
+    max-idle: 25
+---
+#dev 环境
+spring:
+  profiles: dev
+  datasource:
+      url: jdbc:mysql://localhost:3306/
+      username: root
+      password:
+      driver-class-name: com.mysql.jdbc.Driver
+      validation-query: SELECT 1 FROM t_growth_giftpackage_coupon
+      test-while-idle: true
+      initial-size: 5
+      max-active: 25
+      max-wait: 6000
+      min-idle: 5
+      max-idle: 25
+logging:
+  level: info
+  path: /tmp/log
+---
+#test 环境
+spring:
+  profiles: test
+  datasource:
+      url: jdbc:mysql://localhost:3306/
+      username: root
+      password:
+      driver-class-name: com.mysql.jdbc.Driver
+---
+#pub config
+server:
+  tomcat:
+    max-threads: 100
+    min-spare-threads: 20
+  port: 9088
+  connection-timeout: "5S"
+  servlet:
+    context-path: /    #统一为访问的url加上一个前缀
+mybatis:
+  mapper-locations: classpath*:mapper/*Mapper.xml
+  config-location: classpath:mybatis/mybatis-config.xml
+  executor-type: simple
+  type-aliases-package: com.zy.demo.entity
+
+#系统自带默认的tomcat,也可以使用jetty。需要配置jetty依赖。
+#management:
+#  security:
+#    enabled: false
